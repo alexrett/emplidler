@@ -5,10 +5,10 @@ IF NOT EXIST %GOPATH%\bin\2goarray.exe GOTO INSTALL
 :POSTINSTALL
 IF "%1"=="" GOTO NOICO
 IF NOT EXIST %1 GOTO BADFILE
-ECHO Creating iconwin.go
-ECHO //+build windows > iconwin.go
-ECHO. >> iconwin.go
-TYPE %1 | %GOPATH%\bin\2goarray Data icon >> iconwin.go
+ECHO Creating icon_windows.go
+ECHO //+build windows > icon_windows.go
+ECHO. >> icon_windows.go
+TYPE %1 | %GOPATH%\bin\2goarray Data icon >> icon_windows.go
 GOTO DONE
 
 :CREATEFAIL
