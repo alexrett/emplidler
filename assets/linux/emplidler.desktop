@@ -1,0 +1,5 @@
+[Desktop Entry]
+Name=Emplidler
+Exec=/usr/bin/emplidler
+Icon=utilities-terminal
+Type=Application
