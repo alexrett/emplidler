@@ -53,13 +53,18 @@ func (f *FingerPrint) getOutboundIP() net.IP {
 func (f *FingerPrint) getMacAddrByIp(ip string) (string, string) {
 	ifas, err := net.Interfaces()
 	if err != nil {
+		log.Fatal(err)
 		return "nil", ""
 	}
+	resevedMac := ""
 	for _, ifa := range ifas {
 		a := ifa.HardwareAddr.String()
 		if a != "" {
 			addrs, _ := ifa.Addrs()
 			for _, addr := range addrs {
+				if strings.Contains(addr.String(), "/24") {
+					resevedMac = a
+				}
 				i := strings.Split(addr.String(), "/")
 				if i[0] == ip {
 					return a, ifa.Name
@@ -67,6 +72,7 @@ func (f *FingerPrint) getMacAddrByIp(ip string) (string, string) {
 			}
 		}
 	}
-	return "nil", ""
-}
 
+	//log.Fatal("no found", resevedMac)
+	return resevedMac, "default"
+}
