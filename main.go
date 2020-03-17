@@ -5,13 +5,15 @@ import (
 	b64 "encoding/base64"
 	"encoding/json"
 	"fmt"
+	"os/exec"
+	"runtime"
+
 	//"github.com/alexrett/active-window"
 	"github.com/alexrett/emplidler/icon"
 	"github.com/alexrett/idler"
 	"github.com/getlantern/systray"
 	"log"
 	"net/http"
-	"os"
 	"runtime/debug"
 	"time"
 )
@@ -22,9 +24,6 @@ var (
 	idlerInstance        *idler.Idle
 	idleStartFromSecond  int
 	idleCountSleepSecond int
-	f                    *os.File
-	logName              string
-	apptime              map[string]int
 	serverUrl            string
 )
 
@@ -38,14 +37,22 @@ func main() {
 	idlerInstance = idler.NewIdle()
 	idleStartFromSecond = 10
 	idleCountSleepSecond = 1
-	logName = "log.log"
-	apptime = make(map[string]int)
 	serverUrl = "" // your url here
 	onExit := func() {
 		//appendStatistic()
 		sendMetricIdle()
 	}
-	go sendMetricActive()
+
+	go func() {
+		for {
+			if hashKey != "" {
+				sendMetricActive()
+				break
+			}
+			time.Sleep(1 * time.Second)
+		}
+	}()
+
 	go loopIdler()
 	// Should be called at the very beginning of main().
 	systray.RunWithAppWindow("Emplidler", 1024, 524, onReady, onExit)
@@ -60,7 +67,19 @@ func onReady() {
 	for {
 		select {
 		case <-mUrl.ClickedCh:
-			systray.ShowAppWindow(serverUrl + "/api/v1/pull?h=" + hashKey)
+			url := serverUrl + "/api/v1/pull?h=" + hashKey
+			switch runtime.GOOS {
+			case "linux":
+				err := exec.Command("xdg-open", url).Start()
+				if err != nil {
+					// todo: need log error
+				}
+			case "windows":
+				systray.ShowAppWindow(url)
+			case "darwin":
+				systray.ShowAppWindow(url)
+			}
+
 		case <-mQuit.ClickedCh:
 			fmt.Println("Quit now...")
 			systray.Quit()
