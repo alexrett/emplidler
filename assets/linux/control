@@ -1,0 +1,8 @@
+Package: emplidler
+Version: 0.1.5
+Provides: emplidler
+Maintainer: Malikov A.V. <alex@malikov.tech>
+Architecture: amd64
+Selection: misc
+Description: Track user idle time
+Priority: optional
