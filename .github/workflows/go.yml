@@ -2,7 +2,7 @@ name: Go
 
 on:
   push:
-    branches: [ master, develop ]
+    branches: [ master ]
   pull_request:
     branches: [ master ]
 
@@ -33,7 +33,7 @@ jobs:
 
     - uses: actions/upload-artifact@v1
       with:
-        name: emplidler_linux.deb
+        name: emplidler_linux_${{ github.sha }}
         path: emplidler_linux.deb
 
   build-windows:
@@ -59,7 +59,7 @@ jobs:
           go build -o release/emplidler.exe -ldflags -H=windowsgui .
       - uses: actions/upload-artifact@v1
         with:
-          name: emplidler_windows
+          name: emplidler_windows_${{ github.sha }}
           path: release
 
   build-macos:
@@ -85,6 +85,6 @@ jobs:
         run: GOOS=darwin GOARCH=amd64 go build -o release/Emplidler.app/Contents/MacOS/emplidler . && chmod +x release/Emplidler.app/Contents/MacOS/emplidler
       - uses: actions/upload-artifact@v1
         with:
-          name: emplidler_mac
+          name: emplidler_mac_${{ github.sha }}
           path: release
 
