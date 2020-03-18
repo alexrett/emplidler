@@ -5,6 +5,7 @@ import (
 	b64 "encoding/base64"
 	"encoding/json"
 	"fmt"
+	"os"
 	"os/exec"
 	"runtime"
 
@@ -24,7 +25,9 @@ var (
 	idlerInstance        *idler.Idle
 	idleStartFromSecond  int
 	idleCountSleepSecond int
-	serverUrl            string
+	ServerUrl            string
+	GitCommit            string
+	AppKey               string
 )
 
 func init() {
@@ -34,10 +37,14 @@ func init() {
 func main() {
 	myFingerPrint = GetFingerPrint()
 	go encodeHashKey(myFingerPrint)
+
+	if cliCommand() {
+		return
+	}
+
 	idlerInstance = idler.NewIdle()
 	idleStartFromSecond = 10
 	idleCountSleepSecond = 1
-	serverUrl = "https://emplidler.biglion.app" // your url here
 	onExit := func() {
 		//appendStatistic()
 		sendMetricIdle()
@@ -59,15 +66,61 @@ func main() {
 
 }
 
+func cliCommand() bool {
+	args := os.Args[1:]
+	if len(args) == 1 {
+		switch args[0] {
+		case "version":
+			fmt.Println(GitCommit)
+			return true
+		case "mac":
+			fmt.Println(myFingerPrint.Mac)
+			return true
+		case "ip":
+			fmt.Println(myFingerPrint.Ip)
+			return true
+		case "iface":
+			fmt.Println(myFingerPrint.Interface)
+			return true
+		case "username":
+			fmt.Println(myFingerPrint.Username)
+			return true
+		case "name":
+			fmt.Println(myFingerPrint.Name)
+			return true
+		case "machineid":
+			fmt.Println(myFingerPrint.MachineId)
+			return true
+		case "help":
+			help := `Emplidler 
+-----
+version - show current application build version
+mac - show your detected mac
+ip - your public ip
+iface - interface for public ip
+username - detected username
+name - detected name
+machineid - your machine id
+help - this help
+`
+			fmt.Println(help)
+			return true
+
+		}
+	}
+
+	return false
+}
+
 func onReady() {
 	systray.SetTemplateIcon(icon.Data, icon.Data)
 	mUrl := systray.AddMenuItem("Your statistic", "12 hours")
 	mQuit := systray.AddMenuItem("Quit", "Quit the whole app")
-
+	systray.AddMenuItem(GitCommit, "version")
 	for {
 		select {
 		case <-mUrl.ClickedCh:
-			url := serverUrl + "/api/v1/pull?h=" + hashKey
+			url := ServerUrl + "/api/v1/pull?h=" + hashKey
 			switch runtime.GOOS {
 			case "linux":
 				err := exec.Command("xdg-open", url).Start()
@@ -125,7 +178,7 @@ func loopIdler() {
 }
 
 func sendMetricActive() {
-	url := fmt.Sprintf(serverUrl+"/api/v1/push?h=%s&t=%d&a=1", hashKey, time.Now().Unix())
+	url := fmt.Sprintf(ServerUrl+"/api/v1/push?h=%s&t=%d&a=1", hashKey, time.Now().Unix())
 	_, err := http.Get(url)
 	if err != nil {
 		log.Println(err)
@@ -134,7 +187,7 @@ func sendMetricActive() {
 }
 
 func sendMetricIdle() {
-	_, err := http.Get(fmt.Sprintf(serverUrl+"/api/v1/push?h=%s&t=%d&a=0", hashKey, time.Now().Unix()))
+	_, err := http.Get(fmt.Sprintf(ServerUrl+"/api/v1/push?h=%s&t=%d&a=0", hashKey, time.Now().Unix()))
 	if err != nil {
 		log.Println(err)
 	}
@@ -142,11 +195,11 @@ func sendMetricIdle() {
 }
 
 func encodeHashKey(dataObj FingerPrint) string {
-	data := fmt.Sprintf("%s:%s:%s:%s", dataObj.MachineId, dataObj.Mac, dataObj.Uid, dataObj.Username)
+	data := fmt.Sprintf("%s:%s:%s:%s%s", dataObj.MachineId, dataObj.Mac, dataObj.Uid, dataObj.Username, AppKey)
 
 	sEnc := b64.StdEncoding.EncodeToString([]byte(data))
 	jsonValue, _ := json.Marshal(&dataObj)
-	resp, err := http.Post(serverUrl+"/api/v1/hello?hash="+sEnc, "application/json", bytes.NewBuffer(jsonValue))
+	resp, err := http.Post(ServerUrl+"/api/v1/hello?hash="+sEnc, "application/json", bytes.NewBuffer(jsonValue))
 	if err != nil {
 		log.Fatal(err)
 	}

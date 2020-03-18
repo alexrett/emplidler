@@ -4,9 +4,12 @@ tasks:
   build:
     cmds:
       - bash -c "cp assets/windows/rsrc.syso ./rsrc.syso"
-      - go build -o build/bin/emplider.exe -ldflags -H=windowsgui .
+      - go build -o build/bin/emplider.exe -ldflags -H=windowsgui -X main.GitCommit=$EMPLIDLER_GIT_COMMIT -X main.ServerUrl=$EMPLIDLER_SERVER_URL -X main.AppKey=$EMPLIDLER_APP_KEY .
       - bash -c "mv rsrc.syso build/bin/rsrc.syso"
     silent: true
+    vars:
+      EMPLIDLER_GIT_COMMIT:
+        sh: git describe --tag
 
 
   package:
