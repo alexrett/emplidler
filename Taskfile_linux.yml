@@ -1,0 +1,25 @@
+version: '2'
+
+tasks:
+  docker-build:
+    cmds:
+      - cd assets/linux && docker build . --tag=alexrett/emplidler-linux-build:0.0.1
+
+  build:
+    cmds:
+      - mkdir -p build/bin
+      - docker pull alexrett/emplidler-linux-build:0.0.1
+      - docker run --rm -v $(pwd):/opt/emplidler alexrett/emplidler-linux-build:0.0.1 bash -c "cd /opt/emplidler/ && go build -o build/bin/emplidler ."
+    silent: true
+
+  package:
+    cmds:
+      - cp -R assets/linux emplidler_linux
+      - mkdir emplidler_linux/usr/bin
+      - mv build/bin/emplidler emplidler_linux/usr/bin/
+      - fakeroot dpkg-deb --build emplidler_linux
+      - rm -rf emplidler_linux/
+      - mkdir release
+      - mv emplidler_linux.deb release/
+    silent: true
+

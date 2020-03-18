@@ -15,8 +15,5 @@ This is very simple open source cross platform desktop client to track user idle
 
 ## How to build
 
-*Linux*
-```
-docker pull alexrett/emplidler-linux-build:0.0.1
-docker run --rm -v $(pwd):/opt/emplidler alexrett/emplidler-linux-build:0.0.1 bash -c "cd /opt/emplidler/ && go build ."
-```
+- install Taskfile https://taskfile.dev/#/installation
+- run `task release`  

@@ -1,0 +1,26 @@
+version: '2'
+
+tasks:
+  build:
+    cmds:
+      - mkdir -p build/bin
+      - go build -o build/bin/emplidler .
+    silent: true
+
+  package:
+    cmds:
+      - mkdir -p release/Emplidler.app/Contents/MacOS
+      - mkdir -p release/Emplidler.app/Contents/Resources
+      - cp assets/darwin/Info.plist release/Emplidler.app/Contents/Info.plist
+      - cp assets/darwin/icon.icns release/Emplidler.app/Contents/Resources/icon.icns
+      - cp build/bin/emplidler release/Emplidler.app/Contents/MacOS/emplidler
+    silent: true
+
+  clean:
+    cmds:
+      - rm -rf build release
+
+  release:
+    cmds:
+      - task: build
+      - task: package
