@@ -7,61 +7,60 @@ on:
     branches: [ master ]
 
 jobs:
+  build-linux:
+    name: Build linux
+    runs-on: ubuntu-latest
+    steps:
 
-#  build-linux:
-#    name: Build linux
-#    runs-on: ubuntu-latest
-#    steps:
-#
-#    - name: Set up Go 1.14
-#      uses: actions/setup-go@v1
-#      with:
-#        go-version: 1.14
-#      id: go
-#
-#    - name: Check out code into the Go module directory
-#      uses: actions/checkout@v2
-#
-#    - name: build linux binary
-#      run: |
-#        docker pull alexrett/emplidler-linux-build:0.0.1
-#        docker run --rm -v $(pwd):/opt/emplidler alexrett/emplidler-linux-build:0.0.1 bash -c "cd /opt/emplidler/ && go build ."
-#
-#    - name: create debian package
-#      run: |
-#        cp -R assets/linux emplidler_linux && mkdir emplidler_linux/usr/bin && mv emplidler emplidler_linux/usr/bin/
-#        fakeroot dpkg-deb --build emplidler_linux
-#
-#    - uses: actions/upload-artifact@v1
-#      with:
-#        name: emplidler_linux.deb
-#        path: emplidler_linux.deb
+    - name: Set up Go 1.14
+      uses: actions/setup-go@v1
+      with:
+        go-version: 1.14
+      id: go
 
-#  build-windows:
-#    strategy:
-#      matrix:
-#        go-version: [1.14.x]
-#        platform: [windows-latest]
-#    runs-on: ${{ matrix.platform }}
-#    steps:
-#      - name: Install Go
-#        uses: actions/setup-go@v1
-#        with:
-#          go-version: ${{ matrix.go-version }}
-#      - name: Checkout code
-#        uses: actions/checkout@v2
-#      - name: Prepare
-#        run: |
-#          mkdir release
-#          cp assets/windows/rsrc.syso rsrc.syso
-#          cp rsrc.syso release/rsrc.syso
-#      - name: Build
-#        run: |
-#          go build -o release/emplidler.exe -ldflags -H=windowsgui .
-#      - uses: actions/upload-artifact@v1
-#        with:
-#          name: emplidler_windows
-#          path: release
+    - name: Check out code into the Go module directory
+      uses: actions/checkout@v2
+
+    - name: build linux binary
+      run: |
+        docker pull alexrett/emplidler-linux-build:0.0.1
+        docker run --rm -v $(pwd):/opt/emplidler alexrett/emplidler-linux-build:0.0.1 bash -c "cd /opt/emplidler/ && go build ."
+
+    - name: create debian package
+      run: |
+        cp -R assets/linux emplidler_linux && mkdir emplidler_linux/usr/bin && mv emplidler emplidler_linux/usr/bin/
+        fakeroot dpkg-deb --build emplidler_linux
+
+    - uses: actions/upload-artifact@v1
+      with:
+        name: emplidler_linux.deb
+        path: emplidler_linux.deb
+
+  build-windows:
+    strategy:
+      matrix:
+        go-version: [1.14.x]
+        platform: [windows-latest]
+    runs-on: ${{ matrix.platform }}
+    steps:
+      - name: Install Go
+        uses: actions/setup-go@v1
+        with:
+          go-version: ${{ matrix.go-version }}
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Prepare
+        run: |
+          mkdir release
+          cp assets/windows/rsrc.syso rsrc.syso
+          cp rsrc.syso release/rsrc.syso
+      - name: Build
+        run: |
+          go build -o release/emplidler.exe -ldflags -H=windowsgui .
+      - uses: actions/upload-artifact@v1
+        with:
+          name: emplidler_windows
+          path: release
 
   build-macos:
     strategy:
