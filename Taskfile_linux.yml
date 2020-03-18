@@ -9,8 +9,11 @@ tasks:
     cmds:
       - mkdir -p build/bin
       - docker pull alexrett/emplidler-linux-build:0.0.1
-      - docker run --rm -v $(pwd):/opt/emplidler alexrett/emplidler-linux-build:0.0.1 bash -c "cd /opt/emplidler/ && go build -o build/bin/emplidler ."
+      - docker run -e "EMPLIDLER_GIT_COMMIT=$EMPLIDLER_GIT_COMMIT" -e "EMPLIDLER_SERVER_URL=$EMPLIDLER_SERVER_URL" -e "EMPLIDLER_APP_KEY=$EMPLIDLER_APP_KEY" --rm -v $(pwd):/opt/emplidler alexrett/emplidler-linux-build:0.0.1 bash -c "cd /opt/emplidler/ && go build -ldflags '-X main.GitCommit=$EMPLIDLER_GIT_COMMIT -X main.ServerUrl=$EMPLIDLER_SERVER_URL -X main.AppKey=$EMPLIDLER_APP_KEY' -o build/bin/emplidler ."
     silent: true
+    vars:
+      EMPLIDLER_GIT_COMMIT:
+        sh: git describe --tag
 
   package:
     cmds:
