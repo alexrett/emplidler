@@ -1,0 +1,14 @@
+version: '2'
+
+tasks:
+  build:
+    cmds:
+      - bash -c "cp assets/windows/rsrc.syso ./rsrc.syso"
+      - go build -o build/bin/emplider.exe -ldflags -H=windowsgui .
+      - bash -c "mv rsrc.syso build/bin/rsrc.syso"
+    silent: true
+
+
+  package:
+    cmds:
+      - bash -c "cp -r build/bin release"

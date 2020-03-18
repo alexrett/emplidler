@@ -1,0 +1,53 @@
+name: packages
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        go-version: [1.14.x]
+        platform: [windows-latest, ubuntu-18.04, macos-latest]
+    runs-on: ${{ matrix.platform }}
+    steps:
+    - name: Install Go
+      uses: actions/setup-go@v1
+      with:
+        go-version: ${{ matrix.go-version }}
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: install task (windows)
+      run: |
+        choco install wget
+        wget https://github.com/go-task/task/releases/download/v2.8.0/task_windows_amd64.zip
+        7z e task_windows_amd64.zip -y
+      if: matrix.platform == 'windows-latest'
+    - name: install task (linux)
+      run: |
+        wget https://github.com/go-task/task/releases/download/v2.8.0/task_linux_amd64.tar.gz
+        tar -zxvf task_linux_amd64.tar.gz
+        chmod +x task
+      if: matrix.platform == 'ubuntu-18.04'
+    - name: install task (macos)
+      run: |
+        wget https://github.com/go-task/task/releases/download/v2.8.0/task_darwin_amd64.tar.gz
+        tar -zxvf task_darwin_amd64.tar.gz
+        chmod +x task
+      if: matrix.platform == 'macos-latest'
+
+    - name: Build (windows)
+      run: .\task.exe release
+      if: matrix.platform == 'windows-latest'
+
+    - name: Build (unix)
+      run: ./task release
+      if: matrix.platform != 'windows-latest'
+
+    - uses: actions/upload-artifact@v1
+      with:
+        name: emplidler_${{ matrix.platform }}_${{ github.sha }}
+        path: release
+
