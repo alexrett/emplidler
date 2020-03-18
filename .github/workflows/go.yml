@@ -37,11 +37,37 @@ jobs:
 #        name: emplidler_linux.deb
 #        path: emplidler_linux.deb
 
-  build-windows:
+#  build-windows:
+#    strategy:
+#      matrix:
+#        go-version: [1.14.x]
+#        platform: [windows-latest]
+#    runs-on: ${{ matrix.platform }}
+#    steps:
+#      - name: Install Go
+#        uses: actions/setup-go@v1
+#        with:
+#          go-version: ${{ matrix.go-version }}
+#      - name: Checkout code
+#        uses: actions/checkout@v2
+#      - name: Prepare
+#        run: |
+#          mkdir release
+#          cp assets/windows/rsrc.syso rsrc.syso
+#          cp rsrc.syso release/rsrc.syso
+#      - name: Build
+#        run: |
+#          go build -o release/emplidler.exe -ldflags -H=windowsgui .
+#      - uses: actions/upload-artifact@v1
+#        with:
+#          name: emplidler_windows
+#          path: release
+
+  build-macos:
     strategy:
       matrix:
         go-version: [1.14.x]
-        platform: [windows-latest]
+        platform: [macos-latest]
     runs-on: ${{ matrix.platform }}
     steps:
       - name: Install Go
@@ -52,36 +78,14 @@ jobs:
         uses: actions/checkout@v2
       - name: Prepare
         run: |
-          mkdir release
-          cp assets/windows/rsrc.syso rsrc.syso
-          cp rsrc.syso release/rsrc.syso
+          mkdir -p release/Emplidler.app/Contents/MacOS
+          mkdir -p release/Emplidler.app/Contents/Resources
+          cp assets/darwin/Info.plist release/Emplidler.app/Contents/Info.plist
+          cp assets/darwin/icon.icns release/Emplidler.app/Contents/Resources/icon.icns
       - name: Build
-        run: |
-          go build -o release/emplidler.exe -ldflags -H=windowsgui .
+        run: GOOS=darwin GOARCH=amd64 go build -o release/Emplidler.app/Contents/MacOS/emplidler . && chmod +x release/Emplidler.app/Contents/MacOS/emplidler
       - uses: actions/upload-artifact@v1
         with:
-          name: emplidler_windows
+          name: emplidler_mac
           path: release
-
-#  build-macos:
-#    strategy:
-#      matrix:
-#        go-version: [1.14.x]
-#        platform: [macos-latest]
-#    runs-on: ${{ matrix.platform }}
-#    steps:
-#      - name: Install Go
-#        uses: actions/setup-go@v1
-#        with:
-#          go-version: ${{ matrix.go-version }}
-#      - name: Checkout code
-#        uses: actions/checkout@v2
-#      - name: Prepare
-#        run: mkdir -p Emplidler.app/MacOS && mkdir -p
-#      - name: Build
-#        run: mkdir Emplidler && assets/windows/rsrc.syso rsrc.syso && go build -o release/emplidler.exe -ldflags -H=windowsgui . cp rsrc.syso release/rsrc.syso
-#      - uses: actions/upload-artifact@v1
-#        with:
-#          name: emplidler_windows
-#          path: release
 
