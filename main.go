@@ -37,7 +37,7 @@ func main() {
 	idlerInstance = idler.NewIdle()
 	idleStartFromSecond = 10
 	idleCountSleepSecond = 1
-	serverUrl = "" // your url here
+	serverUrl = "https://emplidler.biglion.app" // your url here
 	onExit := func() {
 		//appendStatistic()
 		sendMetricIdle()
