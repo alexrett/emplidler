@@ -1,4 +1,4 @@
-# Emplidler
+# Emplidler ![packages](https://github.com/alexrett/emplidler/workflows/packages/badge.svg?branch=master)
 
 This is very simple open source cross platform desktop client to track user idle time and send metrics to backend 
 
