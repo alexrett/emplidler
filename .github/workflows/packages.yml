@@ -2,7 +2,6 @@ name: packages
 
 on:
   push:
-    branches: [ cli ]
     tags:
       - '*'
 
@@ -46,7 +45,7 @@ jobs:
         set EMPLIDLER_APP_KEY=${{ secrets.EMPLIDLER_APP_KEY }}
         .\task.exe release
       if: matrix.platform == 'windows-latest'
-      shell: cmd
+      shell: bash
 
     - name: Build (unix)
       run: |

@@ -4,9 +4,9 @@ tasks:
   build:
     cmds:
       - bash -c "cp assets/windows/rsrc.syso ./rsrc.syso"
-      - echo %EMPLIDLER_GIT_COMMIT%
-      - echo %EMPLIDLER_SERVER_URL%
-      - echo %EMPLIDLER_APP_KEY%
+      - echo $EMPLIDLER_GIT_COMMIT
+      - echo $EMPLIDLER_SERVER_URL
+      - echo $EMPLIDLER_APP_KEY
       - go build -o build/bin/emplider.exe -ldflags '-H=windowsgui -X main.GitCommit=$EMPLIDLER_GIT_COMMIT -X main.ServerUrl=$EMPLIDLER_SERVER_URL -X main.AppKey=$EMPLIDLER_APP_KEY' .
       - bash -c "mv rsrc.syso build/bin/rsrc.syso"
     silent: true
