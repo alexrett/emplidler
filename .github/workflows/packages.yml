@@ -19,10 +19,16 @@ jobs:
         go-version: ${{ matrix.go-version }}
     - name: Checkout code
       uses: actions/checkout@v2
+    - name: Extract tag name
+      id: tag
+      uses: actions/github-script@0.2.0
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        script: |
+          return context.payload.ref.replace(/\/refs\/tags\//, '');
     - name: install task (windows)
       run: |
-        choco install wget
-        wget https://github.com/go-task/task/releases/download/v2.8.0/task_windows_amd64.zip
+        Invoke-WebRequest https://github.com/go-task/task/releases/download/v2.8.0/task_windows_amd64.zip -OutFile task_windows_amd64.zip
         7z e task_windows_amd64.zip -y
       if: matrix.platform == 'windows-latest'
     - name: install task (linux)
@@ -40,16 +46,15 @@ jobs:
 
     - name: Build (windows)
       run: |
-        set EMPLIDLER_GIT_COMMIT=${GITHUB_REF##*/}
-        set EMPLIDLER_SERVER_URL=${{ secrets.EMPLIDLER_SERVER_URL }}
-        set EMPLIDLER_APP_KEY=${{ secrets.EMPLIDLER_APP_KEY }}
-        ./task.exe release
+        go build -o build/bin/emplider.exe -ldflags '-H=windowsgui -X main.GitCommit=${{ steps.tag.outputs.result }} -X main.ServerUrl=${{ secrets.EMPLIDLER_SERVER_URL }} -X main.AppKey=${{ secrets.EMPLIDLER_APP_KEY }}' .
+        mv rsrc.syso build/bin/rsrc.syso
+#        ./task.exe release
       if: matrix.platform == 'windows-latest'
-      shell: bash
+      shell: cmd
 
     - name: Build (unix)
       run: |
-        export EMPLIDLER_GIT_COMMIT=${GITHUB_REF##*/}
+        export EMPLIDLER_GIT_COMMIT=${{ steps.tag.outputs.result }}
         export EMPLIDLER_SERVER_URL=${{ secrets.EMPLIDLER_SERVER_URL }}
         export EMPLIDLER_APP_KEY=${{ secrets.EMPLIDLER_APP_KEY }}
         ./task release
