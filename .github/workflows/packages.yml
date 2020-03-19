@@ -43,9 +43,11 @@ jobs:
         set EMPLIDLER_GIT_COMMIT=${GITHUB_REF##*/}
         set EMPLIDLER_SERVER_URL=${{ secrets.EMPLIDLER_SERVER_URL }}
         set EMPLIDLER_APP_KEY=${{ secrets.EMPLIDLER_APP_KEY }}
-        ./task.exe release
+        go build -o build/bin/emplider.exe -ldflags '-H=windowsgui -X main.GitCommit=$EMPLIDLER_GIT_COMMIT -X main.ServerUrl=$EMPLIDLER_SERVER_URL -X main.AppKey=$EMPLIDLER_APP_KEY' .
+        mv rsrc.syso build/bin/rsrc.syso
+#        ./task.exe release
       if: matrix.platform == 'windows-latest'
-      shell: bash
+      shell: cmd
 
     - name: Build (unix)
       run: |
