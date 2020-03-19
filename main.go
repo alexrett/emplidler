@@ -195,7 +195,7 @@ func sendMetricIdle() {
 }
 
 func encodeHashKey(dataObj FingerPrint) string {
-	data := fmt.Sprintf("%s:%s:%s:%s%s", dataObj.MachineId, dataObj.Mac, dataObj.Uid, dataObj.Username, AppKey)
+	data := fmt.Sprintf("%s:%s:%s:%s", dataObj.MachineId, dataObj.Uid, dataObj.Username, AppKey)
 
 	sEnc := b64.StdEncoding.EncodeToString([]byte(data))
 	jsonValue, _ := json.Marshal(&dataObj)
