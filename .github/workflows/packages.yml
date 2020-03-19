@@ -42,8 +42,8 @@ jobs:
     - name: Build (windows)
       run: |
         set EMPLIDLER_GIT_COMMIT=${GITHUB_REF##*/}
-        set EMPLIDLER_SERVER_URL=https://emplidler.biglion.app
-        set EMPLIDLER_APP_KEY=
+        set EMPLIDLER_SERVER_URL=${{ secrets.EMPLIDLER_SERVER_URL }}
+        set EMPLIDLER_APP_KEY=${{ secrets.EMPLIDLER_APP_KEY }}
         .\task.exe release
       if: matrix.platform == 'windows-latest'
       shell: cmd
