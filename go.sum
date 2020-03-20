@@ -6,6 +6,8 @@ github.com/alexrett/active-window v0.0.0-20200316010346-52f8f0f3c303 h1:eg3xLsU6
 github.com/alexrett/active-window v0.0.0-20200316010346-52f8f0f3c303/go.mod h1:u1mPKmBR0QEQMABmKnTQYNevkOwsYfXzpyVZU6NgUVI=
 github.com/alexrett/idler v0.0.0-20200313005634-cbdd0edc8241 h1:qctIkAHwckzEM+x3RVfBPS4D1iscBjtUWk6fxUG7VAY=
 github.com/alexrett/idler v0.0.0-20200313005634-cbdd0edc8241/go.mod h1:LnVLRtcG2s+l3cqvBIWYvzupqodpOaNZVELI2BelCGo=
+github.com/alexrett/idler v0.0.0-20200317210216-af009d70b926 h1:XyBwQGbqNdMt3VUlGAN2EFpef/hp9ugpeWMytrDeBiA=
+github.com/alexrett/idler v0.0.0-20200317210216-af009d70b926/go.mod h1:LnVLRtcG2s+l3cqvBIWYvzupqodpOaNZVELI2BelCGo=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/denisbrodbeck/machineid v1.0.1 h1:geKr9qtkB876mXguW2X6TU4ZynleN6ezuMSRhl4D7AQ=
 github.com/denisbrodbeck/machineid v1.0.1/go.mod h1:dJUwb7PTidGDeYyUBmXZ2GphQBbjJCrnectwCyxcUSI=
