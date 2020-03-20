@@ -1,5 +1,5 @@
 Package: emplidler
-Version: 0.1.7
+Version: 0.1.9-fixed1
 Provides: emplidler
 Maintainer: Malikov A.V. <alex@malikov.tech>
 Architecture: amd64
