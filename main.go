@@ -45,10 +45,10 @@ func main() {
 	idlerInstance = idler.NewIdle()
 	idleStartFromSecond = 10
 	idleCountSleepSecond = 1
-	onExit := func() {
-		//appendStatistic()
-		sendMetricIdle()
-	}
+	//onExit := func() {
+	//	//appendStatistic()
+	//	sendMetricIdle()
+	//}
 
 	go func() {
 		for {
@@ -60,9 +60,9 @@ func main() {
 		}
 	}()
 
-	go loopIdler()
+	loopIdler()
 	// Should be called at the very beginning of main().
-	systray.RunWithAppWindow("Emplidler", 1024, 524, onReady, onExit)
+	//systray.RunWithAppWindow("Emplidler", 1024, 524, onReady, onExit)
 
 }
 
